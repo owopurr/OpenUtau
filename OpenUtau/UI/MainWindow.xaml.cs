@@ -415,7 +415,11 @@ namespace OpenUtau.UI
                 Multiselect = false,
                 CheckFileExists = true
             };
-            if (openFileDialog.ShowDialog() == true) CmdImportAudio(openFileDialog.FileName);
+            if (openFileDialog.ShowDialog() == true) {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName)) {
+                    CmdImportAudio(openFileDialog.FileName);
+                }
+            }
         }
 
         private void MenuImportMidi_Click(object sender, RoutedEventArgs e)
@@ -426,20 +430,24 @@ namespace OpenUtau.UI
                 Multiselect = false,
                 CheckFileExists = true
             };
-            if (openFileDialog.ShowDialog() == true) CmdImportAudio(openFileDialog.FileName);
-            var project = DocManager.Inst.Project;
-            var parts = Core.Formats.Midi.Load(openFileDialog.FileName, project);
+            if (openFileDialog.ShowDialog() == true) {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName)) {
+                    CmdImportAudio(openFileDialog.FileName);
 
-            DocManager.Inst.StartUndoGroup();
-            foreach (var part in parts)
-            {
-                var track = new UTrack();
-                track.TrackNo = project.Tracks.Count;
-                part.TrackNo = track.TrackNo;
-                DocManager.Inst.ExecuteCmd(new AddTrackCommand(project, track));
-                DocManager.Inst.ExecuteCmd(new AddPartCommand(project, part));
+                    var project = DocManager.Inst.Project;
+                    var parts = Core.Formats.Midi.Load(openFileDialog.FileName, project);
+
+                    DocManager.Inst.StartUndoGroup();
+                    foreach (var part in parts) {
+                        var track = new UTrack();
+                        track.TrackNo = project.Tracks.Count;
+                        part.TrackNo = track.TrackNo;
+                        DocManager.Inst.ExecuteCmd(new AddTrackCommand(project, track));
+                        DocManager.Inst.ExecuteCmd(new AddPartCommand(project, part));
+                    }
+                    DocManager.Inst.EndUndoGroup();
+                }
             }
-            DocManager.Inst.EndUndoGroup();
         }
 
         private void MenuSingers_Click(object sender, RoutedEventArgs e)
@@ -513,7 +521,12 @@ namespace OpenUtau.UI
                 Multiselect = true,
                 CheckFileExists = true
             };
-            if (openFileDialog.ShowDialog() == true) CmdOpenFile(openFileDialog.FileNames);
+            //if (openFileDialog.ShowDialog() == true) CmdOpenFile(openFileDialog.FileNames);
+            if (openFileDialog.ShowDialog() == true) {
+                if (!string.IsNullOrEmpty(openFileDialog.FileName)) {
+                    CmdOpenFile(openFileDialog.FileNames);
+                }
+            }
         }
 
         private void CmdOpenFile(string[] files)
@@ -534,7 +547,7 @@ namespace OpenUtau.UI
             {
                 SaveFileDialog dialog = new SaveFileDialog() { DefaultExt = "ustx", Filter = "Project Files|*.ustx", Title = "Save File" };
                 if (dialog.ShowDialog() == true)
-                {
+                {  
                     DocManager.Inst.ExecuteCmd(new SaveProjectNotification(dialog.FileName));
                 }
             }

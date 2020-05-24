@@ -6,6 +6,7 @@ using System.IO;
 
 using OpenUtau.Core.USTx;
 using OpenUtau.SimpleHelpers;
+using System.Diagnostics;
 
 namespace OpenUtau.Core.Formats
 {
